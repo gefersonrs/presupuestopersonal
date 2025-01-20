@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Budget Tracker</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active">
+                        <span class="material-icons">dashboard</span>
+                        <a href="#dashboard">Dashboard</a>
+                    </li>
+                    <li>
+                        <span class="material-icons">calendar_today</span>
+                        <a href="#calendar">Calendar</a>
+                    </li>
+                    <li>
+                        <span class="material-icons">receipt_long</span>
+                        <a href="#purchases">Purchases</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header>
+                <h1>Dashboard</h1>
+                <div class="header-controls">
+                    <div class="time-filter">
+                        <select id="timeframeFilter">
+                            <option value="this-month">This Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="customDateRange" class="custom-date-range" style="display: none;">
+                            <input type="date" id="startDate">
+                            <input type="date" id="endDate">
+                            <button id="applyCustomRange" class="apply-btn">Apply</button>
+                        </div>
+                    </div>
+                    <button id="addPurchaseBtn" class="add-button">
+                        <span class="material-icons">add</span>
+                        Add Purchase
+                    </button>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <div class="summary-cards">
+                    <div class="card">
+                        <h3>Total Expenses</h3>
+                        <p class="amount">$0.00</p>
+                        <p class="trend"></p>
+                    </div>
+                    <div class="card">
+                        <h3>Monthly Budget</h3>
+                        <p class="amount">$0.00</p>
+                        <p class="budget-progress"></p>
+                    </div>
+                    <div class="card">
+                        <h3>Remaining</h3>
+                        <p class="amount">$0.00</p>
+                        <p class="days-left"></p>
+                    </div>
+                    <div class="card">
+                        <h3>Average Daily Spend</h3>
+                        <p class="amount">$0.00</p>
+                        <p class="daily-trend"></p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Spending by Category</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Daily Spending Trend</h3>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="recent-purchases">
+                    <h2>Recent Purchases</h2>
+                    <div class="purchases-list" id="purchasesList">
+                        <!-- Purchases will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Calendar Section -->
+        <div class="section calendar-section" style="display: none;">
+            <header>
+                <h1>Calendar</h1>
+                <div class="header-controls">
+                    <div class="calendar-navigation">
+                        <button id="prevMonth" class="nav-btn">
+                            <span class="material-icons">chevron_left</span>
+                        </button>
+                        <h2 id="currentMonth">January 2025</h2>
+                        <button id="nextMonth" class="nav-btn">
+                            <span class="material-icons">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div id="calendarDays" class="calendar-days"></div>
+            </div>
+
+            <!-- Day Details Modal -->
+            <div id="dayDetailsModal" class="modal">
+                <div class="modal-content">
+                    <h2 id="selectedDate">January 1, 2025</h2>
+                    <div class="day-summary">
+                        <div class="summary-item">
+                            <span>Total Purchases:</span>
+                            <span id="dayTotalPurchases">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Amount:</span>
+                            <span id="dayTotalAmount">$0.00</span>
+                        </div>
+                    </div>
+                    <div id="dayPurchasesList" class="day-purchases-list">
+                        <!-- Day purchases will be listed here -->
+                    </div>
+                    <button class="close-btn" onclick="closeDayDetailsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchases Section -->
+        <div class="section purchases-section" style="display: none;">
+            <header>
+                <h1>Purchases</h1>
+                <div class="header-controls">
+                    <div class="time-filter">
+                        <select id="purchasesTimeframeFilter">
+                            <option value="this-month">This Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                        <div id="purchasesCustomDateRange" class="custom-date-range" style="display: none;">
+                            <input type="date" id="purchasesStartDate">
+                            <input type="date" id="purchasesEndDate">
+                            <button id="purchasesApplyCustomRange" class="apply-btn">Apply</button>
+                        </div>
+                    </div>
+                    <button id="purchasesAddBtn" class="add-button">
+                        <span class="material-icons">add</span>
+                        Add Purchase
+                    </button>
+                </div>
+            </header>
+
+            <div class="purchases-table-container">
+                <table class="purchases-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="purchasesTableBody">
+                        <!-- Purchases will be listed here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding purchases -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Purchase</h2>
+            <form id="purchaseForm">
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="food">Food</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="health">Health</option>
+                        <option value="housing">Housing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="submit-btn">Add Purchase</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Purchase Modal -->
+    <div id="editPurchaseModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Purchase</h2>
+            <form id="editPurchaseForm">
+                <input type="hidden" id="editPurchaseId">
+                <div class="form-group">
+                    <label for="editDescription">Description</label>
+                    <input type="text" id="editDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAmount">Amount ($)</label>
+                    <input type="number" id="editAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category</label>
+                    <select id="editCategory" required>
+                        <option value="food">Food</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="health">Health</option>
+                        <option value="housing">Housing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Date</label>
+                    <input type="date" id="editDate" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="delete-btn" onclick="deletePurchase()">Delete</button>
+                    <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

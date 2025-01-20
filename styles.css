@@ -1,0 +1,547 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary-color: #2563eb;
+    --sidebar-bg: #1e293b;
+    --main-bg: #f1f5f9;
+    --card-bg: white;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+}
+
+body {
+    background-color: var(--main-bg);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding: 1.5rem;
+    position: fixed;
+    height: 100vh;
+}
+
+.logo h2 {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.sidebar nav ul {
+    list-style: none;
+}
+
+.sidebar nav ul li {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sidebar nav ul li:hover,
+.sidebar nav ul li.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar nav ul li span {
+    margin-right: 0.75rem;
+}
+
+.sidebar nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    color: var(--text-primary);
+    font-size: 2rem;
+}
+
+.add-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.add-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Header Controls */
+.header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.time-filter {
+    position: relative;
+}
+
+.time-filter select {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+}
+
+.custom-date-range {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    min-width: 300px;
+}
+
+.custom-date-range input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+}
+
+.apply-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+/* Dashboard Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.card .amount {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card p.trend,
+.card p.budget-progress,
+.card p.days-left,
+.card p.daily-trend {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.card p.trend.positive {
+    color: #10b981;
+}
+
+.card p.trend.negative {
+    color: #ef4444;
+}
+
+/* Charts Container */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+/* Recent Purchases */
+.recent-purchases {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recent-purchases h2 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.cancel-btn,
+.submit-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: #e2e8f0;
+    color: var(--text-primary);
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #1d4ed8;
+}
+
+/* Purchases List */
+.purchases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.purchase-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+}
+
+.purchase-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.purchase-description {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.purchase-details {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.purchase-amount {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Calendar Styles */
+.calendar-section {
+    padding: 2rem;
+    margin-left: 250px;
+}
+
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+}
+
+.nav-btn:hover {
+    background-color: var(--main-bg);
+    border-radius: 50%;
+}
+
+.calendar-container {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    position: relative;
+    background-color: var(--main-bg);
+}
+
+.calendar-day:hover {
+    background-color: #e2e8f0;
+}
+
+.calendar-day.has-purchases {
+    background-color: #dbeafe;
+}
+
+.calendar-day.today {
+    border: 2px solid var(--primary-color);
+}
+
+.calendar-day .day-number {
+    font-weight: 500;
+}
+
+.calendar-day .purchase-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.calendar-day .day-total {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Day Details Modal */
+.day-summary {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--main-bg);
+    border-radius: 0.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.summary-item span:first-child {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.summary-item span:last-child {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.day-purchases-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Purchases Section */
+.purchases-section {
+    padding: 2rem;
+    margin-left: 250px;
+}
+
+.purchases-table-container {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.purchases-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.purchases-table th,
+.purchases-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.purchases-table th {
+    color: var(--text-secondary);
+    font-weight: 500;
+    background-color: var(--main-bg);
+}
+
+.purchases-table tr:hover {
+    background-color: #f8fafc;
+}
+
+.purchase-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.edit-btn:hover {
+    background-color: #dbeafe;
+}
+
+.delete-btn {
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.delete-btn:hover {
+    background-color: #fecaca;
+}
+
+/* Section Display */
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
