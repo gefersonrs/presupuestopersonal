@@ -30,12 +30,72 @@ let categoryChart = null;
 let trendChart = null;
 
 // State
-let purchases = JSON.parse(localStorage.getItem('purchases')) || [];
-let monthlyBudget = parseFloat(localStorage.getItem('monthlyBudget')) || 2000.00;
+let purchases = [];
+let monthlyBudget = 2000.00;
 let currentTimeframe = {
     start: null,
     end: null
 };
+
+// API functions
+async function fetchPurchases() {
+    try {
+        const response = await fetch('http://localhost:3000/api/purchases');
+        purchases = await response.json();
+        updateUI();
+    } catch (error) {
+        console.error('Error fetching purchases:', error);
+    }
+}
+
+async function addPurchase(purchase) {
+    try {
+        const response = await fetch('http://localhost:3000/api/purchases', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(purchase),
+        });
+        const newPurchase = await response.json();
+        purchases.push(newPurchase);
+        updateUI();
+    } catch (error) {
+        console.error('Error adding purchase:', error);
+    }
+}
+
+async function updatePurchase(id, purchase) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/purchases/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(purchase),
+        });
+        const updatedPurchase = await response.json();
+        const index = purchases.findIndex(p => p.id === id);
+        if (index !== -1) {
+            purchases[index] = updatedPurchase;
+            updateUI();
+        }
+    } catch (error) {
+        console.error('Error updating purchase:', error);
+    }
+}
+
+async function deletePurchase(id) {
+    try {
+        await fetch(`http://localhost:3000/api/purchases/${id}`, {
+            method: 'DELETE',
+        });
+        purchases = purchases.filter(p => p.id !== id);
+        updateUI();
+    } catch (error) {
+        console.error('Error deleting purchase:', error);
+    }
+}
 
 // Colors for categories
 const categoryColors = {
@@ -108,24 +168,18 @@ function closeModal() {
     purchaseForm.reset();
 }
 
-function handlePurchaseSubmit(e) {
+async function handlePurchaseSubmit(e) {
     e.preventDefault();
-
+    const formData = new FormData(e.target);
     const purchase = {
-        id: Date.now(),
-        description: document.getElementById('description').value,
-        amount: parseFloat(document.getElementById('amount').value),
-        category: document.getElementById('category').value,
-        date: document.getElementById('date').value,
+        date: formData.get('date'),
+        description: formData.get('description'),
+        amount: parseFloat(formData.get('amount')),
+        category: formData.get('category')
     };
-
-    purchases.push(purchase);
-    localStorage.setItem('purchases', JSON.stringify(purchases));
-    
-    updateUI();
-    renderCalendar();
-    renderPurchasesTable();
+    await addPurchase(purchase);
     closeModal();
+    e.target.reset();
 }
 
 function updateTimeframe(value) {
@@ -293,25 +347,33 @@ function updateTrendChart(filteredPurchases) {
 }
 
 function showSection(sectionId) {
-    sections.forEach(section => {
-        section.style.display = 'none';
-    });
-    
+    // Hide all sections first
+    document.querySelector('.main-content').style.display = 'none';
+    document.querySelector('.calendar-section').style.display = 'none';
+    document.querySelector('.purchases-section').style.display = 'none';
+
+    // Show the selected section
     if (sectionId === 'dashboard') {
         document.querySelector('.main-content').style.display = 'block';
     } else {
         document.querySelector(`.${sectionId}-section`).style.display = 'block';
     }
 
-    // Update active nav link
+    // Remove active class from all links
     navLinks.forEach(link => {
-        link.parentElement.classList.remove('active');
-        if (link.getAttribute('href') === `#${sectionId}`) {
-            link.parentElement.classList.add('active');
+        const listItem = link.parentElement;
+        listItem.classList.remove('active');
+        if (link.getAttribute('href') === '#' + sectionId) {
+            listItem.classList.add('active');
         }
     });
 
-    // Render calendar if calendar section is shown
+    // Only update UI for dashboard section
+    if (sectionId === 'dashboard') {
+        updateUI();
+    }
+
+    // Handle specific section initializations
     if (sectionId === 'calendar') {
         renderCalendar();
     } else if (sectionId === 'purchases') {
@@ -438,7 +500,7 @@ function renderPurchasesTable() {
         });
 }
 
-function showEditModal(purchaseId) {
+async function showEditModal(purchaseId) {
     const purchase = purchases.find(p => p.id === parseInt(purchaseId));
     if (!purchase) return;
 
@@ -456,43 +518,27 @@ function closeEditModal() {
     editPurchaseForm.reset();
 }
 
-function handleEditPurchaseSubmit(e) {
+async function handleEditPurchaseSubmit(e) {
     e.preventDefault();
-
-    const purchaseId = parseInt(document.getElementById('editPurchaseId').value);
-    const purchaseIndex = purchases.findIndex(p => p.id === purchaseId);
-    
-    if (purchaseIndex === -1) return;
-
-    purchases[purchaseIndex] = {
-        id: purchaseId,
-        description: document.getElementById('editDescription').value,
-        amount: parseFloat(document.getElementById('editAmount').value),
-        category: document.getElementById('editCategory').value,
-        date: document.getElementById('editDate').value,
+    const formData = new FormData(e.target);
+    const purchase = {
+        date: formData.get('editDate'),
+        description: formData.get('editDescription'),
+        amount: parseFloat(formData.get('editAmount')),
+        category: formData.get('editCategory')
     };
-
-    localStorage.setItem('purchases', JSON.stringify(purchases));
-    
-    updateUI();
-    renderCalendar();
-    renderPurchasesTable();
+    const purchaseId = e.target.dataset.purchaseId;
+    await updatePurchase(purchaseId, purchase);
     closeEditModal();
 }
 
-function deletePurchase() {
+async function deletePurchase() {
     const purchaseId = parseInt(document.getElementById('editPurchaseId').value);
-    purchases = purchases.filter(p => p.id !== purchaseId);
-    
-    localStorage.setItem('purchases', JSON.stringify(purchases));
-    
-    updateUI();
-    renderCalendar();
-    renderPurchasesTable();
+    await deletePurchase(purchaseId);
     closeEditModal();
 }
 
-// Initialize dashboard
-showSection('dashboard');
-updateTimeframe('this-month');
-updateUI();
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPurchases();
+});
